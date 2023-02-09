@@ -14,6 +14,10 @@ app.listen(8000 || port, () => {
   console.log("webhook listening");
 });
 
+app.get("/",(req,res)=>{
+  res.send("hello biro")
+})
+
 app.get("/webhook", (req, res) => {
   let mode = "hub.mode";
   let challenge = "hub.challenge";
