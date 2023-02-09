@@ -23,10 +23,11 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/webhook", (req, res) => {
-  let mode = "hub.mode";
-  let challenge = "hub.challenge";
-  let token = "hub.verify_token";
+  let mode = req.query["hub.mode"];
+  let challenge = req.query["hub.challenge"];
+  let token = req.query["hub.verify_token"];
   if (mode && token) {
+    console.log("called", mode);
     if (mode === "subscribe" && token === myToken) {
       res.status(200).send(challenge);
     } else {
@@ -52,6 +53,9 @@ app.post("/webhook", (req, res) => {
       let from = body.entry[0].changes[0].value.messages[0].from;
       let message_body = body.entry[0].changes[0].value.messages[0].text.body;
       console.log("messageBody", message_body);
+      console.log("phone_number_id", phone_number_id);
+      console.log("from", from);
+      console.log("message_body", message_body);
       axios({
         method: "post",
         url: `https://graph.facebook.com/v15.0/${phone_number_id}/messages`,
@@ -61,11 +65,9 @@ app.post("/webhook", (req, res) => {
         },
         data: {
           messaging_product: "whatsapp",
-          //   recipient_type: "individual",
           to: from,
           type: "text",
           text: {
-            preview_url: false,
             body: "This is test message",
           },
         },
